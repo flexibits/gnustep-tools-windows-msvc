@@ -4,11 +4,15 @@ setlocal
 set PROJECT=libxml2
 set GITHUB_REPO=flexibits/GNOME-libxml2
 
+
+
+:: [FLEXIBITS] we have applied the icu patch so use our own branch on our own fork
+set TAG=flexibits-2.11
 :: get the latest release tag from GitHub
-cd %~dp0
-for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-release-tag.sh %GITHUB_REPO%'`) do (
-  set TAG=%%i
-)
+::cd %~dp0
+::for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-release-tag.sh %GITHUB_REPO%'`) do (
+::  set TAG=%%i
+::)
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
