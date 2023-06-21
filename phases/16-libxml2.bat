@@ -19,14 +19,17 @@ call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%" || exit \b 1
 
+:: [FLEXIBITS]  We assume that the system icu library will be used as we are building
+::              on recent versions of Win10 and Win11.  
+::              We have applied the patch already and only need to set the LIBS_PRIVATE variable
 :: check which ICU libraries to link
-if exist "%INSTALL_PREFIX%\lib\icuin.lib" (
-  set "LIBS_PRIVATE=-licuin -licuuc -licudt"
-) else (
+::if exist "%INSTALL_PREFIX%\lib\icuin.lib" (
+::  set "LIBS_PRIVATE=-licuin -licuuc -licudt"
+::) else (
   echo Using system-provided ICU DLL ^(requires Windows 10 version 1903 or later^)
-  git apply "%ROOT_DIR%\patches\opt-libxml2-windows-icu.patch" || exit /b 1
+::  git apply "%ROOT_DIR%\patches\opt-libxml2-windows-icu.patch" || exit /b 1
   set "LIBS_PRIVATE=-licu"
-)
+::)
 
 cd "win32" || exit /b 1
 
