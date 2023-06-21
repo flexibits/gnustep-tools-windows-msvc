@@ -2,7 +2,7 @@
 setlocal
 
 set PROJECT=libdispatch
-set GITHUB_REPO=apple/swift-corelibs-libdispatch
+set GITHUB_REPO=flexibits/apple-swift-corelibs-libdispatch
 set TAG=
 
 :: load environment and prepare project

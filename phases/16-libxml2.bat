@@ -2,7 +2,7 @@
 setlocal
 
 set PROJECT=libxml2
-set GITHUB_REPO=GNOME/libxml2
+set GITHUB_REPO=flexibits/GNOME-libxml2
 
 :: get the latest release tag from GitHub
 cd %~dp0

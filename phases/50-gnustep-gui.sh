@@ -5,7 +5,7 @@ shopt -s inherit_errexit
 cd `dirname $0`
 
 export PROJECT=gnustep-gui
-export GITHUB_REPO=gnustep/libs-gui
+export GITHUB_REPO=flexibits/gnustep-libs-gui
 export TAG=
 
 # load environment and prepare project

@@ -5,7 +5,7 @@ shopt -s inherit_errexit
 cd `dirname $0`
 
 export PROJECT=gnustep-systempreferences
-export GITHUB_REPO=gnustep/apps-systempreferences
+export GITHUB_REPO=flexibits/gnustep-apps-systempreferences
 export TAG=
 
 # load environment and prepare project

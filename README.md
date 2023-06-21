@@ -1,3 +1,6 @@
+# FLEXIBITS UPDATE
+
+This repo should only be used as part ot [windows-fantastical-gnustep](https://github.com/flexibits/windows-fantastical-gnustep)
 
 # GNUstep Windows MSVC Toolchain
 
@@ -10,13 +13,15 @@ This project comprises a collection of scripts to build a modern GNUstep toolcha
 
 The toolchain consists of the following libraries:
 
-- [GNUstep Base Library](https://github.com/gnustep/libs-base) (Foundation)
-- [GNUstep CoreBase Library](https://github.com/gnustep/libs-corebase) (CoreFoundation)
+(UPDATE FLEXIBITS FORKS USED == FB)
+
+- [FB GNUstep Base Library](https://github.com/flexibits/gnustep-libs-base) (Foundation)
+- [FB GNUstep CoreBase Library](https://github.com/flexibits/gnustep-libs-corebase) (CoreFoundation)
 - [libobjc2](https://github.com/gnustep/libobjc2) (using gnustep-2.0 runtime)
-- [libdispatch](https://github.com/apple/swift-corelibs-libdispatch) (official Apple release from the Swift Core Libraries)
+- [FB libdispatch](https://github.com/flexibits/apple-swift-corelibs-libdispatch) (official Apple release from the Swift Core Libraries)
 - [libffi](https://github.com/libffi/libffi)
 - [libiconv](https://github.com/kiyolee/libiconv-win-build)
-- [libxml2](https://github.com/GNOME/libxml2)
+- [FB libxml2](https://github.com/flexibits/GNOME-libxml2)
 - [libxslt](https://github.com/GNOME/libxslt)
 - [libcurl](https://github.com/curl/curl)
 - [ICU](https://docs.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-) (using system-provided DLL on Windows 10 version 1903 or later)

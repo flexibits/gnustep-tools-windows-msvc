@@ -5,7 +5,7 @@ shopt -s inherit_errexit
 cd `dirname $0`
 
 export PROJECT=gnustep-corebase
-export GITHUB_REPO=gnustep/libs-corebase
+export GITHUB_REPO=flexibits/gnustep-libs-corebase
 export TAG=
 
 # load environment and prepare project
