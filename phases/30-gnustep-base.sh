@@ -17,12 +17,16 @@ echo
 echo "### Loading GNUstep environment"
 . "$UNIX_INSTALL_PREFIX/share/GNUstep/Makefiles/GNUstep.sh"
 
-echo
-echo "### Running configure"
-./configure \
-  --host=$TARGET \
-  --disable-tls \
-  $GNUSTEP_BASE_OPTIONS
+if [[ -z ${SKIP_CONFIGURE+0} ]];
+then {
+    echo
+    echo "### Running configure"
+    ./configure \
+      --host=$TARGET \
+      --disable-tls \
+      $GNUSTEP_BASE_OPTIONS
+};
+fi
 
 echo
 echo "### Building"
