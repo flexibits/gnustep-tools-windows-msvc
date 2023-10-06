@@ -30,7 +30,7 @@ fi
 
 echo
 echo "### Building"
-make -j`nproc`
+make -j "${BUILD_THREADS:-`nproc`}"
 
 echo
 echo "### Installing"
