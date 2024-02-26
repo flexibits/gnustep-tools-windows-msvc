@@ -19,12 +19,20 @@ CONFIGURE_OPTS=
 if [ "$BUILD_TYPE" == "Debug" ]; then
   CONFIGURE_OPTS=--enable-debug-by-default
 fi
+
+CC="clang -m64"
+CPP="clang++ -m64"
+CXX="clang++ -m64"
+
 ./configure \
-  --host=$TARGET \
+  --build=$TARGET --host=$TARGET \
   --prefix="$UNIX_INSTALL_PREFIX" \
   --with-library-combo=ng-gnu-gnu \
   --with-runtime-abi=gnustep-2.0 \
   $CONFIGURE_OPTS
+  # CC="$MSVCC" CXX="$MSVCC" LD=link \
+  # CPP="cl -nologo -EP" CXXCPP="cl -nologo -EP" \
+  # CPPFLAGS="-DFFI_BUILDING_DLL" LDFLAGS="" \
 
 echo
 echo "### Installing"
