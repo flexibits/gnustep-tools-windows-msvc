@@ -21,7 +21,7 @@ if not defined INSTALL_ROOT set INSTALL_ROOT=C:\GNUstep
 :: fragile as e.g. a Windows-installed "make" would be used instead of the one
 :: installed in MSYS2. We could instead pass paths into MSYS2, but this doesn't
 :: work because of spaces in Windows paths.
-if not defined BASH set BASH=msys2_shell -defterm -no-start -msys2 -full-path -here -c
+if not defined BASH set BASH=msys2_shell -defterm -no-start -clangarm64 -full-path -here -c
 
 :: determine target triple
 set ARCH=%VSCMD_ARG_TGT_ARCH%
@@ -30,6 +30,9 @@ if "%ARCH%" == "x86" (
   set MFLAG=-m32
 ) else if "%ARCH%" == "x64" (
   set TARGET=x86_64-pc-windows
+  set MFLAG=-m64
+) else if "%ARCH%" == "arm64" (
+  set TARGET=arm64-pc-windows
   set MFLAG=-m64
 ) else (
   echo Unknown target architecture: %ARCH%

@@ -3,7 +3,7 @@ setlocal
 
 set PROJECT=libdispatch
 set GITHUB_REPO=flexibits/apple-swift-corelibs-libdispatch
-set TAG=
+set TAG=arm
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1

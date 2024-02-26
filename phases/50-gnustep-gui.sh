@@ -17,17 +17,24 @@ echo
 echo "### Loading GNUstep environment"
 . "$UNIX_INSTALL_PREFIX/share/GNUstep/Makefiles/GNUstep.sh"
 
+CC="clang -m64"
+CPP="clang++ -m64"
+CXX="clang++ -m64"
+  # `# specify environment since it doesn't use gnustep-config to get these` \
+  # CC="`gnustep-config --variable=CC`" \
+  # CPP="`gnustep-config --variable=CPP`" \
+  # CXX="`gnustep-config --variable=CXX`" \
+
+CFLAGS="$CFLAGS -D__WIN32__"
+CPPFLAGS="$CPPFLAGS -D__WIN32__"
+
 echo
 echo "### Running configure"
 ./configure \
-  --host=$TARGET \
-  `# specify environment since it doesn't use gnustep-config to get these` \
-  CC="`gnustep-config --variable=CC`" \
-  CPP="`gnustep-config --variable=CPP`" \
-  CXX="`gnustep-config --variable=CXX`" \
+  --build=$TARGET --host=$TARGET \
   CFLAGS="$CFLAGS -I$UNIX_INSTALL_PREFIX/include" \
   CPPFLAGS="$CPPFLAGS -I$UNIX_INSTALL_PREFIX/include" \
-  LDFLAGS="$LDFLAGS -L$UNIX_INSTALL_PREFIX/lib" \
+  LDFLAGS="$LDFLAGS -L$UNIX_INSTALL_PREFIX/lib"
 
 echo
 echo "### Building"
