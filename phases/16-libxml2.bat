@@ -4,32 +4,12 @@ setlocal
 set PROJECT=libxml2
 set GITHUB_REPO=flexibits/GNOME-libxml2
 
-
-
-:: [FLEXIBITS] we have applied the icu patch so use our own branch on our own fork
-set TAG=flexibits-2.11
-:: get the latest release tag from GitHub
-::cd %~dp0
-::for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-release-tag.sh %GITHUB_REPO%'`) do (
-::  set TAG=%%i
-::)
+set "TAG=flexibits-2.11"
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%" || exit \b 1
-
-:: [FLEXIBITS]  We assume that the system icu library will be used as we are building
-::              on recent versions of Win10 and Win11.  
-::              We have applied the patch already and only need to set the LIBS_PRIVATE variable
-:: check which ICU libraries to link
-::if exist "%INSTALL_PREFIX%\lib\icuin.lib" (
-::  set "LIBS_PRIVATE=-licuin -licuuc -licudt"
-::) else (
-  echo Using system-provided ICU DLL ^(requires Windows 10 version 1903 or later^)
-::  git apply "%ROOT_DIR%\patches\opt-libxml2-windows-icu.patch" || exit /b 1
-  set "LIBS_PRIVATE=-licu"
-::)
 
 cd "win32" || exit /b 1
 
@@ -62,4 +42,4 @@ xcopy /Y /F "bin.msvc\libxml2_a.lib" "%INSTALL_PREFIX%\lib\xml2.lib*" || exit /b
 xcopy /Y /F "%SRCROOT%\%PROJECT%\include\libxml\*.h" "%INSTALL_PREFIX%\include\libxml\" || exit /b 1
 
 :: write pkgconfig file
-call "%~dp0\..\scripts\common.bat" write_pkgconfig libxml-2.0 %TAG% -DLIBXML_STATIC -lxml2 "%LIBS_PRIVATE%" || exit /b 1
+call "%~dp0\..\scripts\common.bat" write_pkgconfig libxml-2.0 %TAG% -DLIBXML_STATIC -lxml2 "-licuin -licuuc -licudt" || exit /b 1

@@ -27,7 +27,16 @@ exit /b %errorlevel%
   if not exist "%PROJECT%" (
     echo.
     echo ### Cloning project
-    git clone --recursive %REPO% %PROJECT% || exit /b 1
+    if "%SPARSE_CHECKOUT%"=="" (
+      git clone --recursive %REPO% %PROJECT% || exit /b 1
+    ) else (
+      git clone -n --depth=1 --filter=tree:0 %REPO% %PROJECT% || exit /b 1
+      cd %PROJECT% || exit /b 1
+      git sparse-checkout set --no-cone "%SPARSE_CHECKOUT%" || exit /b 1
+      git fetch --tags || exit /b 1
+      git checkout %TAG% || exit /b 1
+      cd .. || exit /b 1
+    )
   )
   
   cd %PROJECT%
