@@ -4,7 +4,8 @@ setlocal
 set PROJECT=libxml2
 set GITHUB_REPO=flexibits/GNOME-libxml2
 
-set "TAG=flexibits-2.11"
+:: set "TAG=flexibits-2.11"
+set "TAG=brooke/revert-xml-patch"
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1

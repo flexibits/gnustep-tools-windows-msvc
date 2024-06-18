@@ -6,7 +6,7 @@ cd `dirname $0`
 
 export PROJECT=gnustep-base
 export GITHUB_REPO=flexibits/gnustep-libs-base
-export TAG=
+export TAG=brooke/disable-windows-icu
 
 # load environment and prepare project
 ../scripts/common.bat prepare_project
