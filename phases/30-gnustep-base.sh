@@ -24,6 +24,7 @@ then {
     ./configure \
       --host=$TARGET \
       --disable-tls \
+      --disable-windows-icu \
       $GNUSTEP_BASE_OPTIONS
 };
 fi

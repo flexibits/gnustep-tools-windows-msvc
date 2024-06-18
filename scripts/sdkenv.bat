@@ -23,6 +23,8 @@ if not defined INSTALL_ROOT set INSTALL_ROOT=C:\GNUstep
 :: work because of spaces in Windows paths.
 if not defined BASH set BASH=msys2_shell -defterm -no-start -clangarm64 -full-path -here -c
 
+if not defined PYTHON set PYTHON=python
+
 :: determine target triple
 set ARCH=%VSCMD_ARG_TGT_ARCH%
 if "%ARCH%" == "x86" (

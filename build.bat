@@ -1,6 +1,10 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+if "%FB_BUILDVM%"=="1" (
+  echo on
+)
+
 setlocal
 IF "%selfWrapped%"=="" (
   REM this is necessary so that we can use "exit" to terminate the batch file,
@@ -29,6 +33,7 @@ set "ROOT_DIR=%~dp0"
   if /i "%~1" == "--no-update" set NO_UPDATE=1 & shift & goto getopts
   if /i "%~1" == "--patches" set "ADDITIONAL_PATCHES_DIR=%~2" & shift & shift & goto getopts
   if /i "%~1" == "--no-gui" set NO_GUI=1 & shift & goto getopts
+  if /i "%~1" == "--python" set "PYTHON=%~2" & shift & shift & goto getopts
   
   if not "%~1" == "" echo Unknown option: %~1 & exit 1
 
@@ -61,6 +66,25 @@ if defined ONLY_PHASE (
     echo Valid phases: !PHASES!
     exit 1
   )
+)
+
+:: check python installation
+if not defined PYTHON (
+  echo Error: must set %%PYTHON%% or use --python argument to provide path to python.exe
+  exit /b 1
+)
+
+if not exist "%PYTHON%" (
+  echo Error: provided python installation doesn't exist
+  echo ^(Provided installation was: "%PYTHON%"^)
+  exit /b 1
+)
+
+%PYTHON% -c "import sys; sys.exit(0) if sys.version_info[:2] >= (3, 10) else sys.exit(1)"
+if not "%ERRORLEVEL%"=="0" (
+  echo Error: provided python installation either doesn't work or is an unsupported version ^(minimum is 3.10^)
+  echo ^(Provided installation was: "%PYTHON%"^)
+  exit /b 1
 )
 
 :: load environment
