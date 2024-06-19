@@ -18,7 +18,14 @@ set "UCONFIG_H=%SRCROOT%\%PROJECT%\icu4c\source\common\unicode\uconfig.h"
   || exit /b 1
 
 :: perform build
-msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=%ARCH% /p:SkipUWP=true
+::
+:: note: The subproject cintltst fails on CI, complaining of stdalign.h missing, for
+:: reasons I can't discern. I've tried specifying C11 compliance, but the error persists.
+:: Because that subproject is just used for tests, and everything else seems to build fine
+:: despite it failing, I'm choosing to ignore it. But I'm going to leave this note here
+:: in case it bites us later on.
+::   - brooke
+msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=%ARCH% /p:SkipUWP=true || exit /b 1
 
 :: clear out previously installed artifacts
 :: (we do this explicitly instead of overwriting because depending on ICU configuration options,
