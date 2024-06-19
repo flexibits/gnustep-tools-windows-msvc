@@ -18,7 +18,6 @@ set "UCONFIG_H=%SRCROOT%\%PROJECT%\icu4c\source\common\unicode\uconfig.h"
   || exit /b 1
 
 :: perform build
-msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /target:Clean
 msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=%ARCH% /p:SkipUWP=true
 
 :: clear out previously installed artifacts
