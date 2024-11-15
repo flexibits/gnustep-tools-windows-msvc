@@ -27,22 +27,22 @@ echo "### Running configure"
 MSVCC="$PWD/msvcc.sh -g"
 if [ "$ARCH" == "x86" ]; then
   MSVCC="$MSVCC -m32"
-  TARGET=i686-pc-cygwin # cygwin suffix required for building DLL
+  FFI_TARGET=i686-pc-cygwin # cygwin suffix required for building DLL
 elif [ "$ARCH" == "x64" ]; then
   MSVCC="$MSVCC -m64"
-  TARGET=x86_64-pc-cygwin
+  FFI_TARGET=x86_64-pc-cygwin
 elif [ "$ARCH" == "arm64" ]; then
   MSVCC="$MSVCC -marm64"
-  TARGET=arm64-pc-cygwin
+  FFI_TARGET=arm64-pc-cygwin
 else
   echo Unknown ARCH: $ARCH && exit 1
 fi
 if [ "$BUILD_TYPE" == "Debug" ]; then
   MSVCC="$MSVCC -DUSE_DEBUG_RTL"
 fi
-rm -rf $TARGET
+rm -rf $FFI_TARGET
 ./configure \
-  --build=$TARGET --host=$TARGET \
+  --build=$FFI_TARGET --host=$FFI_TARGET \
   --prefix="$UNIX_INSTALL_PREFIX" \
   --disable-docs \
   CC="$MSVCC" CXX="$MSVCC" LD=link \

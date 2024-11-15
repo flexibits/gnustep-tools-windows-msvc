@@ -20,6 +20,7 @@ if [ "$BUILD_TYPE" == "Debug" ]; then
   CONFIGURE_OPTS=--enable-debug-by-default
 fi
 ./configure \
+  --build=$TARGET \
   --host=$TARGET \
   --prefix="$UNIX_INSTALL_PREFIX" \
   --with-library-combo=ng-gnu-gnu \

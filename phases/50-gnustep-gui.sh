@@ -20,6 +20,7 @@ echo "### Loading GNUstep environment"
 echo
 echo "### Running configure"
 ./configure \
+  --build=$TARGET \
   --host=$TARGET \
   `# specify environment since it doesn't use gnustep-config to get these` \
   CC="`gnustep-config --variable=CC`" \
