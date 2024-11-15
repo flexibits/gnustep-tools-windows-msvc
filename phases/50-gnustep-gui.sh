@@ -20,7 +20,7 @@ echo "### Loading GNUstep environment"
 echo
 echo "### Running configure"
 ./configure \
-  --host=$TARGET \
+  --build=$TARGET --host=$TARGET \
   `# specify environment since it doesn't use gnustep-config to get these` \
   CC="`gnustep-config --variable=CC`" \
   CPP="`gnustep-config --variable=CPP`" \
@@ -31,7 +31,7 @@ echo "### Running configure"
 
 echo
 echo "### Building"
-make -j "${BUILD_THREADS:-`nproc`}"
+make -j "${BUILD_THREADS:-`nproc`}" || bash
 
 echo
 echo "### Installing"
