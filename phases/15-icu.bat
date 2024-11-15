@@ -68,6 +68,7 @@ if "%BUILD_TYPE%"=="Debug" (
   xcopy /Y /F    "%LIBFOLDER%\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
   xcopy /Y /F    "%LIBFOLDER%\icu*.pdb"    "%INSTALL_PREFIX%\bin\"     || exit /b 1
 )
+
 xcopy /Y /F /S "%SRCROOT%\%PROJECT%\icu4c\include\*"        "%INSTALL_PREFIX%\include\" || exit /b 1
 
 :: write pkgconfig files
