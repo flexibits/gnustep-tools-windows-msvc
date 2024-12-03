@@ -2,44 +2,46 @@
 setlocal
 
 set PROJECT=libxml2
-set GITHUB_REPO=flexibits/GNOME-libxml2
+set GITHUB_REPO=GNOME/libxml2
 
-set "TAG=flexibits-2.11"
+:: get the latest release tag from GitHub
+cd %~dp0
+for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-release-tag.sh %GITHUB_REPO%'`) do (
+  set TAG=%%i
+)
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
-cd "%SRCROOT%\%PROJECT%" || exit \b 1
+set BUILD_DIR="%SRCROOT%\%PROJECT%\build-%ARCH%-%BUILD_TYPE%"
+if exist "%BUILD_DIR%" (rmdir /S /Q "%BUILD_DIR%" || exit /b 1)
+mkdir "%BUILD_DIR%" || exit /b 1
+cd "%BUILD_DIR%" || exit /b 1
 
-cd "win32" || exit /b 1
+REM NOTE WV: Use our own bundled ICU, rather than the SDK provided ones
+SET "ICU_INCLUDE_DIR=%INSTALL_PREFIX%\include"
+REM SET ICU_INCLUDE_DIR="%WindowsSdkDir%include\%WindowsSdkVersion%um"
 
 echo.
-echo ### Running configure
-set CONFIGURE_OPTS=
-if "%BUILD_TYPE%" == "Debug" (
-  set "CONFIGURE_OPTS=cruntime=/MDd debug=yes"
-)
-cscript configure.js ^
-  compiler=msvc ^
-  icu=yes xml_debug=no ^
-  %CONFIGURE_OPTS% ^
-  "prefix=%INSTALL_PREFIX%" ^
-  "include=%INSTALL_PREFIX%\include" ^
-  "lib=%INSTALL_PREFIX%\lib" ^
-  "sodir=%INSTALL_PREFIX%\lib" ^
+echo ### Running cmake
+cmake .. %CMAKE_OPTIONS% ^
+  -D BUILD_SHARED_LIBS=NO ^
+  -D LIBXML2_WITH_LZMA=NO ^
+  -D LIBXML2_WITH_PYTHON=NO ^
+  -D LIBXML2_WITH_ZLIB=NO ^
+  -D LIBXML2_WITH_TESTS=NO ^
+  -D LIBXML2_WITH_PROGRAMS=NO ^
+  -D LIBXML2_WITH_ICU=YES ^
+  -D ICU_INCLUDE_DIR=%ICU_INCLUDE_DIR% ^
   || exit /b 1
 
 echo.
 echo ### Building
-:: we only build the static library
-nmake /f Makefile.msvc libxmla || exit /b 1
+ninja || exit /b 1
 
 echo.
 echo ### Installing
-:: rename libxml2_a.lib to xml2.lib to allow linking using -lxml2
-:: (the wildcard suffix is required to suppress the "file or directory" prompt)
-xcopy /Y /F "bin.msvc\libxml2_a.lib" "%INSTALL_PREFIX%\lib\xml2.lib*" || exit /b 1
-xcopy /Y /F "%SRCROOT%\%PROJECT%\include\libxml\*.h" "%INSTALL_PREFIX%\include\libxml\" || exit /b 1
+ninja install || exit /b 1
 
-:: write pkgconfig file
-call "%~dp0\..\scripts\common.bat" write_pkgconfig libxml-2.0 2.11 -DLIBXML_STATIC -lxml2 "-licuin -licuuc -licudt" || exit /b 1
+:: remove installed documentation
+rmdir /S /Q "%INSTALL_PREFIX%\share\doc\libxml2"

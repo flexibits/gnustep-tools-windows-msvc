@@ -34,7 +34,7 @@ if "%ARCH%" == "x86" (
   set TARGET=x86_64-pc-windows
   set MFLAG=-m64
 ) else if "%ARCH%" == "arm64" (
-  set TARGET=arm64-pc-windows
+  set TARGET=aarch64-pc-windows
   set MFLAG=-m64
 ) else (
   echo Unknown target architecture: %ARCH%

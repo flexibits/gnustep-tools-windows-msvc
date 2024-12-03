@@ -7,9 +7,6 @@ cd `dirname $0`
 export PROJECT=libffi
 export GITHUB_REPO=libffi/libffi
 export TAG=`../scripts/get-latest-github-release-tag.sh $GITHUB_REPO`
-# Clamp to v3.4.2 release until issues with later releases are resolved:
-# https://github.com/gnustep/libs-base/issues/278
-# export TAG=v3.4.2
 
 # load environment and prepare project
 ../scripts/common.bat prepare_project
@@ -33,7 +30,7 @@ elif [ "$ARCH" == "x64" ]; then
   TARGET=x86_64-pc-cygwin
 elif [ "$ARCH" == "arm64" ]; then
   MSVCC="$MSVCC -marm64"
-  TARGET=arm64-pc-cygwin
+  TARGET=aarch64-pc-cygwin
 else
   echo Unknown ARCH: $ARCH && exit 1
 fi
@@ -47,7 +44,7 @@ rm -rf $TARGET
   --disable-docs \
   CC="$MSVCC" CXX="$MSVCC" LD=link \
   CPP="cl -nologo -EP" CXXCPP="cl -nologo -EP" \
-  CPPFLAGS="-DFFI_BUILDING_DLL" LDFLAGS="" \
+  CPPFLAGS="-DFFI_BUILDING_DLL" CFLAGS="" LDFLAGS="" \
 
 echo
 echo "### Building"

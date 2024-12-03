@@ -33,6 +33,8 @@ cmake .. %CMAKE_OPTIONS% ^
   -D CURL_USE_SCHANNEL=YES ^
   -D CURL_ZLIB=ON ^
   -D BUILD_CURL_EXE=NO ^
+  -D BUILD_LIBCURL_DOCS=NO ^
+  -D BUILD_MISC_DOCS=NO ^
   || exit /b 1
 
 echo.

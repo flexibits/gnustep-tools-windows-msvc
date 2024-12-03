@@ -19,12 +19,12 @@ if "%VSVERSION%" == "" (
   exit /b 1
 )
 
+:: ARM-based builds have a different build configuration
 if "%ARCH%" == "arm64" (
-  cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%-arm" || exit /b 1
-) else (
-  cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%" || exit /b 1
+  set VSVERSION=%VSVERSION%-arm
 )
 
+cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%" || exit /b 1
 
 if "%ARCH%" == "x86" (
   set BUILD_DIR=%BUILD_TYPE%
@@ -33,8 +33,8 @@ if "%ARCH%" == "x86" (
   set BUILD_DIR=x64\%BUILD_TYPE%
   set PLATFORM=x64
 ) else if "%ARCH%" == "arm64" (
-  set BUILD_DIR=arm64\%BUILD_TYPE%
-  set PLATFORM=arm64
+  set BUILD_DIR=ARM64\%BUILD_TYPE%
+  set PLATFORM=ARM64
 ) else (
   echo Unknown ARCH: %ARCH%
   exit /b 1
