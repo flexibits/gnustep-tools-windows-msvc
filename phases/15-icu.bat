@@ -38,13 +38,21 @@ call %BASH% -c "rm -rvf '%INSTALL_PREFIX%/include/unicode'"
 if "%BUILD_TYPE%"=="Debug" (
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icu*75d.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*d.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
+
+  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*d.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
 ) else (
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icu*75.dll"  "%INSTALL_PREFIX%\bin\"     || exit /b 1
+
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
   xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*.lib"    "%INSTALL_PREFIX%\lib\"     || exit /b 1
+
+  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*.pdb"    "%INSTALL_PREFIX%\bin\"     || exit /b 1
 )
 xcopy /Y /F /S "%SRCROOT%\%PROJECT%\icu4c\include\*"        "%INSTALL_PREFIX%\include\" || exit /b 1
 
