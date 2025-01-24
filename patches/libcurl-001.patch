@@ -1,0 +1,35 @@
+From cf48bade1c025b1be4772c1c883af1c484d6b3e9 Mon Sep 17 00:00:00 2001
+From: Wilfredo Velazquez-Rodriguez <will.velazquez@flexibits.com>
+Date: Fri, 24 Jan 2025 09:49:00 -0500
+Subject: [PATCH] Prefer other encodings over deflate to avoid confusing with
+ RFC-1951 (see https://zlib.net/zlib_faq.html#faq39)
+
+---
+ lib/content_encoding.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/content_encoding.c b/lib/content_encoding.c
+index a4b16dda1..4e33b9f56 100644
+--- a/lib/content_encoding.c
++++ b/lib/content_encoding.c
+@@ -839,7 +839,6 @@ static const struct Curl_cwtype identity_encoding = {
+ static const struct Curl_cwtype * const general_unencoders[] = {
+   &identity_encoding,
+ #ifdef HAVE_LIBZ
+-  &deflate_encoding,
+   &gzip_encoding,
+ #endif
+ #ifdef HAVE_BROTLI
+@@ -847,6 +846,9 @@ static const struct Curl_cwtype * const general_unencoders[] = {
+ #endif
+ #ifdef HAVE_ZSTD
+   &zstd_encoding,
++#endif
++#ifdef HAVE_LIBZ
++  &deflate_encoding,
+ #endif
+   NULL
+ };
+-- 
+2.42.0.windows.2
+
