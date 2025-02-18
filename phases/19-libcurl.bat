@@ -11,7 +11,8 @@ for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-rel
 )
 
 :: pin to 8.10.1 while 8.11.0 is the latest: https://github.com/curl/curl/issues/15511
-if "%TAG%"=="curl-8_11_0" set TAG=curl-8_10_1
+:: if "%TAG%"=="curl-8_11_0" set TAG=curl-8_10_1
+set TAG=curl-8_11_1
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
