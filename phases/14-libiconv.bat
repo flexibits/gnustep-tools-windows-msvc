@@ -20,7 +20,7 @@ if "%VSVERSION%" == "" (
 )
 
 if "%ARCH%" == "arm64" (
-  cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%-arm" || exit /b 1
+  cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%-arm64" || exit /b 1
 ) else (
   cd "%SRCROOT%\%PROJECT%\build-VS%VSVERSION%" || exit /b 1
 )
