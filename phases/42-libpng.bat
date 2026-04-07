@@ -3,7 +3,7 @@ setlocal
 
 set PROJECT=libpng
 set GITHUB_REPO=glennrp/libpng
-set TAG=v1.6.39
+set TAG=v1.6.56
 
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
