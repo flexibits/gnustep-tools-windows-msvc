@@ -13,6 +13,13 @@ export TAG=
 
 cd "$SRCROOT/$PROJECT"
 
+# Enable frame pointers for profiling/debugging support
+# see https://dhashe.com/how-to-build-highly-debuggable-c-binaries.html#enable-frame-pointers-for-all-functions
+export CFLAGS="$CFLAGS -fno-omit-frame-pointer"
+export CXXFLAGS="$CXXFLAGS -fno-omit-frame-pointer"
+export OBJCFLAGS="$OBJCFLAGS -fno-omit-frame-pointer"
+export OBJCXXFLAGS="$OBJCXXFLAGS -fno-omit-frame-pointer"
+
 echo
 echo "### Loading GNUstep environment"
 . "$UNIX_INSTALL_PREFIX/share/GNUstep/Makefiles/GNUstep.sh"
