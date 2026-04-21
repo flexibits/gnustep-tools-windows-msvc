@@ -33,7 +33,7 @@ echo "### Running configure"
 
 echo
 echo "### Building"
-make -j "${BUILD_THREADS:-`nproc`}"
+make -j "${BUILD_THREADS:-`nproc`}" --output-sync=target
 
 echo
 echo "### Installing"
