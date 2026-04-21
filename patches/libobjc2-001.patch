@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Wilfredo Velazquez-Rodriguez <will.velazquez@flexibits.com>
+Date: Mon, 21 Apr 2026 00:00:00 -0500
+Subject: [PATCH] Use CMAKE_ASM_COMPILER_TARGET for custom ASM commands on
+ Windows
+
+When cross-compiling for ARM64, clang's -m64 targets x86_64, not ARM64,
+causing machine type conflicts at link time. When CMAKE_ASM_COMPILER_TARGET
+is set (e.g. aarch64-pc-windows-msvc from a toolchain file), pass
+--target=<triple> to the assembler instead.
+
+---
+ CMakeLists.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0000000..0000001 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -191,9 +191,11 @@ set(LIBOBJC_NAME "objc" CACHE STRING
+ set(INSTALL_TARGETS objc)
+
+ if(WIN32)
+-	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+-		set(ASM_TARGET -m64)
++	if(CMAKE_ASM_COMPILER_TARGET)
++		set(ASM_TARGET "--target=${CMAKE_ASM_COMPILER_TARGET}")
++	elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
++		set(ASM_TARGET -m64)
+ 	else()
+ 		set(ASM_TARGET -m32)
+ 	endif()
+ endif()
+--
+2.42.0.windows.2
