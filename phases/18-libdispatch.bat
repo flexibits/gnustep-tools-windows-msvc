@@ -4,14 +4,6 @@ setlocal
 set PROJECT=libdispatch
 set GITHUB_REPO=flexibits/apple-swift-corelibs-libdispatch
 
-:: TODO: These are patches made for ARM a while ago. Rebase those onto latest
-::       (and potentially merge them?) so that arm64 is up-to-date
-if "%ARCH%"=="arm64" (
-  set TAG=inactive/arm
-) else (
-  set TAG=
-)
-
 :: load environment and prepare project
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
