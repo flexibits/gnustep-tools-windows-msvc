@@ -17,22 +17,26 @@ echo
 echo "### Loading GNUstep environment"
 . "$UNIX_INSTALL_PREFIX/share/GNUstep/Makefiles/GNUstep.sh"
 
+GNUSTEP_CC="`gnustep-config --variable=CC`"
+GNUSTEP_CPP="`gnustep-config --variable=CPP`"
+GNUSTEP_CXX="`gnustep-config --variable=CXX`"
+
 echo
 echo "### Running configure"
 ./configure \
-  --build=$TARGET \
+  --build=$CONFIGURE_BUILD \
   --host=$TARGET \
   `# specify environment since it doesn't use gnustep-config to get these` \
-  CC="`gnustep-config --variable=CC`" \
-  CPP="`gnustep-config --variable=CPP`" \
-  CXX="`gnustep-config --variable=CXX`" \
+  CC="$GNUSTEP_CC" \
+  CPP="$GNUSTEP_CPP" \
+  CXX="$GNUSTEP_CXX" \
   CFLAGS="$CFLAGS -I$UNIX_INSTALL_PREFIX/include" \
   CPPFLAGS="$CPPFLAGS -I$UNIX_INSTALL_PREFIX/include" \
   LDFLAGS="$LDFLAGS -L$UNIX_INSTALL_PREFIX/lib" \
 
 echo
 echo "### Building"
-make -j "${BUILD_THREADS:-`nproc`}"
+make -j "${BUILD_THREADS:-`nproc`}" --output-sync=target CC="$GNUSTEP_CC" CXX="$GNUSTEP_CXX"
 
 echo
 echo "### Installing"

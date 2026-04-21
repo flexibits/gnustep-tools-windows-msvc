@@ -37,7 +37,7 @@ fi
   CXX="$CXX $CLANG_TARGET" \
   LDFLAGS="$LDFLAGS -L$UNIX_INSTALL_PREFIX/lib" \
   LIBS="-lobjc" \
-  --build=$TARGET \
+  --build=$CONFIGURE_BUILD \
   --host=$TARGET \
   --prefix="$UNIX_INSTALL_PREFIX" \
   --with-library-combo=ng-gnu-gnu \
