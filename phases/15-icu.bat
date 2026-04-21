@@ -17,8 +17,9 @@ set "UCONFIG_H=%SRCROOT%\%PROJECT%\icu4c\source\common\unicode\uconfig.h"
   "U_DISABLE_RENAMING=1" ^
   || exit /b 1
 
-:: In order to build the ARM64 artifacts, we first have to do a full x64 build. I have no idea why,
-:: but I know this is intentional because their CI pipeline for msvc-arm64 does this too.
+:: ICU's build system requires a full x64 build before the ARM64 build, because the x64 pass
+:: produces host-side data tools (icupkg, genrb, makeconv, etc.) that msbuild runs on the host
+:: machine during the ARM64 target build. ICU's own msvc-arm64 CI pipeline does the same thing.
 if "%ARCH%"=="arm64" (
   msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=x64 /p:SkipUWP=true || exit /b 1
 )
