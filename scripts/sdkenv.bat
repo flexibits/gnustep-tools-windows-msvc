@@ -21,7 +21,11 @@ if not defined INSTALL_ROOT set INSTALL_ROOT=C:\GNUstep
 :: fragile as e.g. a Windows-installed "make" would be used instead of the one
 :: installed in MSYS2. We could instead pass paths into MSYS2, but this doesn't
 :: work because of spaces in Windows paths.
-if not defined BASH set BASH=msys2_shell -defterm -no-start -clangarm64 -full-path -here -c
+if "%VSCMD_ARG_TGT_ARCH%"=="arm64" (
+  if not defined BASH set BASH=msys2_shell -defterm -no-start -clangarm64 -full-path -here -c
+) else (
+  if not defined BASH set BASH=msys2_shell -defterm -no-start -full-path -here -c
+)
 
 if not defined PYTHON set PYTHON=python
 
@@ -35,7 +39,7 @@ if "%ARCH%" == "x86" (
   set MFLAG=-m64
 ) else if "%ARCH%" == "arm64" (
   set TARGET=arm64-pc-windows
-  set MFLAG=-m64
+  set MFLAG=
 ) else (
   echo Unknown target architecture: %ARCH%
   exit /b 1
@@ -54,6 +58,15 @@ if not defined CXX set "CXX=clang++ %MFLAG%"
 if not defined OBJCC set "OBJCC=clang %MFLAG%"
 if not defined OBJCXX set "OBJCXX=clang++ %MFLAG%"
 
+:: autoconf --build triple: reflects the host architecture of the build tools,
+:: not the target. When build != host, autoconf detects cross-compilation and
+:: skips trying to run compiled test programs.
+if "%toolchain_host_arch%" == "arm64" (
+  set CONFIGURE_BUILD=arm64-pc-windows
+) else (
+  set CONFIGURE_BUILD=x86_64-pc-windows
+)
+
 :: LLD linker is required for linking Objective C
 set LDFLAGS=-fuse-ld=lld
 
@@ -64,3 +77,7 @@ set CMAKE_OPTIONS=^
   -G Ninja ^
   -D CMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% ^
   -D CMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%" ^
+
+if defined cmake_toolchain_file (
+  set CMAKE_OPTIONS=%CMAKE_OPTIONS% -D CMAKE_TOOLCHAIN_FILE="%cmake_toolchain_file%"
+)
