@@ -1,0 +1,38 @@
+From e580d66a19a4fcb296d9b45f412714b4bf92c6b5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Wilfredo=20Vel=C3=A1zquez-Rodr=C3=ADguez?=
+ <will.velazquez@flexibits.com>
+Date: Mon, 27 Apr 2026 16:58:21 -0400
+Subject: [PATCH] Update cross.config for Windows arm64 cross-compilation
+
+---
+ cross.config | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cross.config b/cross.config
+index ed2310749..c21f0d4ea 100644
+--- a/cross.config
++++ b/cross.config
+@@ -3,7 +3,7 @@
+ cross_utf8literal_ok=no
+ cross_reuseaddr_ok=0
+ cross_gs_cv_objc_works=yes
+-cross_gs_cv_objc_compiler_supports_constant_string_class=no
++cross_gs_cv_objc_compiler_supports_constant_string_class=yes
+ cross_gs_cv_objc_load_method_worked=no
+ cross_have_poll=no
+ cross_VSPRINTF_RETURNS_LENGTH=1
+@@ -19,9 +19,9 @@ cross_non_fragile=no
+ cross_have_unexpected=no
+ cross_safe_initialize=no
+ cross_found_iconv_libc=no
+-cross_found_iconv_liconv=no
++cross_found_iconv_liconv=yes
+ cross_found_iconv_lgiconv=no
+-cross_objc2_runtime=0
++cross_objc2_runtime=1
+ 
+ # Enable for true cross build
+ if test "$cross_compiling"="yes"; then
+-- 
+2.50.1.windows.1
+
