@@ -27,22 +27,25 @@ echo "### Running configure"
 MSVCC="$PWD/msvcc.sh -g"
 if [ "$ARCH" == "x86" ]; then
   MSVCC="$MSVCC -m32"
-  FFI_TARGET=i686-pc-cygwin # cygwin suffix required for building DLL
+  FFI_BUILD=i686-pc-cygwin # cygwin suffix required for building DLL
+  FFI_HOST=i686-pc-cygwin
 elif [ "$ARCH" == "x64" ]; then
   MSVCC="$MSVCC -m64"
-  FFI_TARGET=x86_64-pc-cygwin
+  FFI_BUILD=x86_64-pc-cygwin
+  FFI_HOST=x86_64-pc-cygwin
 elif [ "$ARCH" == "arm64" ]; then
   MSVCC="$MSVCC -marm64"
-  FFI_TARGET=arm64-pc-cygwin
+  FFI_BUILD=x86_64-pc-cygwin # build tools are x64-hosted
+  FFI_HOST=arm64-pc-cygwin
 else
   echo Unknown ARCH: $ARCH && exit 1
 fi
 if [ "$BUILD_TYPE" == "Debug" ]; then
   MSVCC="$MSVCC -DUSE_DEBUG_RTL"
 fi
-rm -rf $FFI_TARGET
+rm -rf $FFI_HOST
 ./configure \
-  --build=$FFI_TARGET --host=$FFI_TARGET \
+  --build=$FFI_BUILD --host=$FFI_HOST \
   --prefix="$UNIX_INSTALL_PREFIX" \
   --disable-docs \
   CC="$MSVCC" CXX="$MSVCC" LD=link \
