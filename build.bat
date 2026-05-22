@@ -29,6 +29,7 @@ set "ROOT_DIR=%~dp0"
   if /i "%~1" == "--type" set "BUILD_TYPES=%~2" & shift & shift & goto getopts
   if /i "%~1" == "--only" set "ONLY_PHASE=%~2" & shift & shift & goto getopts
   if /i "%~1" == "--only-dependencies" set ONLY_DEPENDENCIES=1 & shift & goto getopts
+  if /i "%~1" == "--start" set "START_PHASE=%~2" & shift & shift & goto getopts
   if /i "%~1" == "--no-clean" set NO_CLEAN=1 & shift & goto getopts
   if /i "%~1" == "--no-update" set NO_UPDATE=1 & shift & goto getopts
   if /i "%~1" == "--patches" set "ADDITIONAL_PATCHES_DIR=%~2" & shift & shift & goto getopts
@@ -59,6 +60,21 @@ if defined ONLY_PHASE (
   )
   if not defined ONLY_PHASE_VALID (
     echo Error: Unknown phase "%ONLY_PHASE%"
+    for %%F in (%ROOT_DIR%\phases\??-*.*) do (
+      call :set_phase_vars %%F
+      set "PHASES=!PHASES!!PHASE_NAME! "
+    )
+    echo Valid phases: !PHASES!
+    exit 1
+  )
+)
+
+if defined START_PHASE (
+  for %%F in (%ROOT_DIR%\phases\??-%START_PHASE%.*) do (
+    set START_PHASE_VALID=1
+  )
+  if not defined START_PHASE_VALID (
+    echo Error: Unknown phase "%START_PHASE%"
     for %%F in (%ROOT_DIR%\phases\??-*.*) do (
       call :set_phase_vars %%F
       set "PHASES=!PHASES!!PHASE_NAME! "
@@ -169,7 +185,12 @@ goto :eof
   
   for %%F in (%ROOT_DIR%\phases\??-*.*) do (
     call :set_phase_vars %%F
-    if defined ONLY_PHASE (
+    if NOT "!START_PHASE!" == "" (
+      if /i "!START_PHASE!" == "!PHASE_NAME!" (
+        set "START_PHASE="
+        call :build_phase
+      )
+    ) else if defined ONLY_PHASE (
       if /i "%ONLY_PHASE%" == "!PHASE_NAME!" (
         call :build_phase
       )

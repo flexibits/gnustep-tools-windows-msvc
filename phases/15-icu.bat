@@ -17,6 +17,13 @@ set "UCONFIG_H=%SRCROOT%\%PROJECT%\icu4c\source\common\unicode\uconfig.h"
   "U_DISABLE_RENAMING=1" ^
   || exit /b 1
 
+:: ICU's build system requires a full x64 build before the ARM64 build, because the x64 pass
+:: produces host-side data tools (icupkg, genrb, makeconv, etc.) that msbuild runs on the host
+:: machine during the ARM64 target build. ICU's own msvc-arm64 CI pipeline does the same thing.
+if "%ARCH%"=="arm64" (
+  msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=x64 /p:SkipUWP=true || exit /b 1
+)
+
 :: perform build
 ::
 :: note: The subproject cintltst fails on CI, complaining of stdalign.h missing, for
@@ -35,25 +42,34 @@ call %BASH% -c "find $(cygpath '%INSTALL_PREFIX%/lib') -iname icu*.lib | xargs r
 call %BASH% -c "find $(cygpath '%INSTALL_PREFIX%/lib/pkgconfig') -iname icu*.pc | xargs rm -vf"
 call %BASH% -c "rm -rvf '%INSTALL_PREFIX%/include/unicode'"
 
-if "%BUILD_TYPE%"=="Debug" (
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icu*75d.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
-
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*d.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
-
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*d.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+if "%ARCH%"=="arm64" (
+  set "BINFOLDER=%SRCROOT%\%PROJECT%\icu4c\binARM64"
+  set "LIBFOLDER=%SRCROOT%\%PROJECT%\icu4c\libARM64"
 ) else (
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\bin64\icu*75.dll"  "%INSTALL_PREFIX%\bin\"     || exit /b 1
-
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*.lib"    "%INSTALL_PREFIX%\lib\"     || exit /b 1
-
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%SRCROOT%\%PROJECT%\icu4c\lib64\icu*.pdb"    "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  set "BINFOLDER=%SRCROOT%\%PROJECT%\icu4c\bin64"
+  set "LIBFOLDER=%SRCROOT%\%PROJECT%\icu4c\lib64"
 )
+
+if "%BUILD_TYPE%"=="Debug" (
+  xcopy /Y /F    "%BINFOLDER%\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icu*75d.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+
+  xcopy /Y /F    "%LIBFOLDER%\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
+  xcopy /Y /F    "%LIBFOLDER%\icu*d.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
+
+  xcopy /Y /F    "%LIBFOLDER%\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%LIBFOLDER%\icu*d.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+) else (
+  xcopy /Y /F    "%BINFOLDER%\icudt75.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icu*75.dll"  "%INSTALL_PREFIX%\bin\"     || exit /b 1
+
+  xcopy /Y /F    "%LIBFOLDER%\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
+  xcopy /Y /F    "%LIBFOLDER%\icu*.lib"    "%INSTALL_PREFIX%\lib\"     || exit /b 1
+
+  xcopy /Y /F    "%LIBFOLDER%\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%LIBFOLDER%\icu*.pdb"    "%INSTALL_PREFIX%\bin\"     || exit /b 1
+)
+
 xcopy /Y /F /S "%SRCROOT%\%PROJECT%\icu4c\include\*"        "%INSTALL_PREFIX%\include\" || exit /b 1
 
 :: write pkgconfig files

@@ -19,6 +19,7 @@ cmake .. %CMAKE_OPTIONS% ^
   -D PNG_STATIC=OFF ^
   -D PNG_EXECUTABLES=OFF ^
   -D PNG_TESTS=OFF ^
+  -Wno-dev ^
   || exit /b 1
 
 echo.
