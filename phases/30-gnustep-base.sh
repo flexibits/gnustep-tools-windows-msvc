@@ -28,7 +28,7 @@ GNUSTEP_CC="`gnustep-config --variable=CC`"
 GNUSTEP_CPP="`gnustep-config --variable=CPP`"
 GNUSTEP_CXX="`gnustep-config --variable=CXX`"
 
-if [[ -z ${SKIP_CONFIGURE+0} ]];
+if [[ -z ${NO_CONFIGURE+0} ]];
 then {
     echo
     echo "### Running configure"
