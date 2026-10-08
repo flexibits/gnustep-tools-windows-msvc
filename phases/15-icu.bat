@@ -3,8 +3,8 @@ setlocal
 
 set "PROJECT=icu"
 set "GITHUB_REPO=unicode-org/icu"
-set "TAG=release-78.3"
-set "ICU_VERSION=78.3"
+set "TAG=release-79.1rc"
+set "ICU_VERSION=79.1"
 set "SPARSE_CHECKOUT=icu4c"
 
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
@@ -51,8 +51,8 @@ if "%ARCH%"=="arm64" (
 )
 
 if "%BUILD_TYPE%"=="Debug" (
-  xcopy /Y /F    "%BINFOLDER%\icudt78.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%BINFOLDER%\icu*78d.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icudt79.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icu*79d.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
 
   xcopy /Y /F    "%LIBFOLDER%\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
   xcopy /Y /F    "%LIBFOLDER%\icu*d.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
@@ -60,8 +60,8 @@ if "%BUILD_TYPE%"=="Debug" (
   xcopy /Y /F    "%LIBFOLDER%\icudt.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
   xcopy /Y /F    "%LIBFOLDER%\icu*d.pdb"   "%INSTALL_PREFIX%\bin\"     || exit /b 1
 ) else (
-  xcopy /Y /F    "%BINFOLDER%\icudt78.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
-  xcopy /Y /F    "%BINFOLDER%\icu*78.dll"  "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icudt79.dll" "%INSTALL_PREFIX%\bin\"     || exit /b 1
+  xcopy /Y /F    "%BINFOLDER%\icu*79.dll"  "%INSTALL_PREFIX%\bin\"     || exit /b 1
 
   xcopy /Y /F    "%LIBFOLDER%\icudt.lib"   "%INSTALL_PREFIX%\lib\"     || exit /b 1
   xcopy /Y /F    "%LIBFOLDER%\icu*.lib"    "%INSTALL_PREFIX%\lib\"     || exit /b 1
