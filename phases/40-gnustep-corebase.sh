@@ -14,11 +14,11 @@ export TAG=
 cd "$SRCROOT/$PROJECT"
 
 echo
-echo "### Loading GNUstep environment"
+echo "### Loading GNUstep environment [$(date +%T)]"
 . "$UNIX_INSTALL_PREFIX/share/GNUstep/Makefiles/GNUstep.sh"
 
 echo
-echo "### Running configure"
+echo "### Running configure [$(date +%T)]"
 
 GNUSTEP_CC="`gnustep-config --variable=CC`"
 GNUSTEP_CPP="`gnustep-config --variable=CPP`"
@@ -38,9 +38,9 @@ GNUSTEP_CXX="`gnustep-config --variable=CXX`"
   LDFLAGS="$LDFLAGS -L$UNIX_INSTALL_PREFIX/lib" \
 
 echo
-echo "### Building"
+echo "### Building [$(date +%T)]"
 make -j "${BUILD_THREADS:-`nproc`}" --output-sync=target CC="$GNUSTEP_CC" CXX="$GNUSTEP_CXX"
 
 echo
-echo "### Installing"
+echo "### Installing [$(date +%T)]"
 make install

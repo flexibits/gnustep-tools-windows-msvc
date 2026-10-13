@@ -16,7 +16,7 @@ call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 cd "%SRCROOT%\%PROJECT%\win32" || exit /b 1
 
 echo.
-echo ### Running configure
+echo ### Running configure [%time%]
 set CONFIGURE_OPTS=
 if "%BUILD_TYPE%" == "Debug" (
   set "CONFIGURE_OPTS=cruntime=/MDd debug=yes"
@@ -32,12 +32,12 @@ cscript configure.js ^
   || exit /b 1
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 :: we only build the static libraries
 nmake /f Makefile.msvc libxslta libexslta || exit /b 1
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 :: rename libxslt_a.lib to xslt.lib to allow linking using -lxslt
 :: (the wildcard suffix is required to suppress the "file or directory" prompt)
 xcopy /Y /F "bin.msvc\libxslt_a.lib" "%INSTALL_PREFIX%\lib\xslt.lib*" || exit /b 1

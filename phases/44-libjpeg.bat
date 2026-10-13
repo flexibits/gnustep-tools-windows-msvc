@@ -20,15 +20,15 @@ mkdir "%BUILD_DIR%" || exit /b 1
 cd "%BUILD_DIR%" || exit /b 1
 
 echo.
-echo ### Running cmake
+echo ### Running cmake [%time%]
 cmake .. %CMAKE_OPTIONS% ^
   -D ENABLE_STATIC=OFF -D INST_ID=vc ^
   || exit /b 1
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 ninja || exit /b 1
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 ninja install || exit /b 1

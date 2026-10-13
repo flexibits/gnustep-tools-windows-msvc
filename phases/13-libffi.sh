@@ -18,12 +18,12 @@ cd "$SRCROOT/$PROJECT" || exit /b 1
 
 if [ ! -f configure ]; then
   echo
-  echo "### Running autogen"
+  echo "### Running autogen [$(date +%T)]"
   ./autogen.sh
 fi
 
 echo
-echo "### Running configure"
+echo "### Running configure [$(date +%T)]"
 MSVCC="$PWD/msvcc.sh -g"
 if [ "$ARCH" == "x86" ]; then
   MSVCC="$MSVCC -m32"
@@ -53,11 +53,11 @@ rm -rf $FFI_HOST
   CPPFLAGS="-DFFI_BUILDING_DLL" LDFLAGS="" \
 
 echo
-echo "### Building"
+echo "### Building [$(date +%T)]"
 make -j "${BUILD_THREADS:-`nproc`}"
 
 echo
-echo "### Installing"
+echo "### Installing [$(date +%T)]"
 # make install throws errors for DLL builds, so we install manually instead
 cd $TARGET
 install -D -t "$UNIX_INSTALL_PREFIX"/lib/pkgconfig/ *.pc

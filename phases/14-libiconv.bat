@@ -42,11 +42,11 @@ if "%ARCH%" == "x86" (
 )
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 msbuild libiconv.sln -t:dll\libiconv -p:Configuration=%BUILD_TYPE% -p:Platform=%PLATFORM%
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 :: rename libiconv.lib to iconv.lib to allow linking using -liconv
 :: (the wildcard suffix is required to suppress the "file or directory" prompt)
 xcopy /Y /F %BUILD_DIR%\libiconv.lib "%INSTALL_PREFIX%\lib\iconv.lib*" || exit /b 1

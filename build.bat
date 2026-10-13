@@ -220,6 +220,7 @@ goto :eof
 :build_phase
   echo.
   echo ###### %PHASE_NAME% ######
+  echo ### Phase started %ARCH% %BUILD_TYPE% %PHASE_NAME% %time%
   
   if %PHASE_EXTENSION% == .bat (
     call %PHASE% || (echo Failed && exit 1)
@@ -228,6 +229,7 @@ goto :eof
   ) else (
     echo Error invalid phase: %PHASE_NAME% && exit 1
   )
+  echo ### Phase finished %ARCH% %BUILD_TYPE% %PHASE_NAME% %time%
   goto :eof
 
 :set_phase_vars

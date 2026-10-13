@@ -20,7 +20,7 @@ mkdir "%BUILD_DIR%" || exit /b 1
 cd "%BUILD_DIR%" || exit /b 1
 
 echo.
-echo ### Running cmake
+echo ### Running cmake [%time%]
 :: CXX and linker flags below are to produce PDBs for release builds.
 :: BlocksRuntime parameters provided to use blocks runtime from libobjc2 with libdispatch-own-blocksruntime.patch.
 :: libdispatch only supports building with clang-cl frontend.
@@ -36,11 +36,11 @@ cmake .. %CMAKE_OPTIONS% ^
   || exit /b 1
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 ninja || exit /b 1
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 ninja install || exit /b 1
 
 :: install PDB file
