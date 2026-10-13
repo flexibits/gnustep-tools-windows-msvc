@@ -6,6 +6,9 @@ set GITHUB_REPO=glennrp/libpng
 set TAG=v1.6.56
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 set BUILD_DIR="%SRCROOT%\%PROJECT%\build-%ARCH%-%BUILD_TYPE%"
@@ -29,3 +32,6 @@ ninja || exit /b 1
 echo.
 echo ### Installing [%time%]
 ninja install || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

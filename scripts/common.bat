@@ -137,6 +137,31 @@ exit /b %errorlevel%
   set GIT_REMOTE=%1
   goto :eof
 
+:: Restore the phase's installed files from the build cache when BUILD_CACHE_DIR is set (CI).
+:: Exits 0 on a hit, so the phase can skip building; otherwise the phase builds and then calls
+:: cache_store. Call it once PROJECT, REPO/GITHUB_REPO and TAG are set, with the phase script's
+:: path as the argument. See build-cache.ps1 for what the cache key covers.
+:: (WindowsSDKVersion ends in a backslash, so it can't be last in a quoted argument.)
+:cache_restore
+  if not defined BUILD_CACHE_DIR exit /b 1
+  if not defined REPO set "REPO=https://github.com/%GITHUB_REPO%.git"
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-cache.ps1" -Action Restore ^
+    -CacheDir "%BUILD_CACHE_DIR%" -Name %PROJECT%-%ARCH%-%BUILD_TYPE% ^
+    -InstallPrefix "%INSTALL_PREFIX%" -StateDir "%INSTALL_PREFIX%.cache" ^
+    -Repo "%REPO%" -Ref "%TAG%" ^
+    -Inputs "%~f1;%~dp0common.bat;%~dp0sdkenv.bat;%~dp0*.py;%ROOT_DIR%\patches\%PROJECT%-*.patch;%cmake_toolchain_file%" ^
+    -Extra "%WindowsSDKVersion%;%ARCH%;%BUILD_TYPE%;%VCToolsVersion%;%VSCMD_VER%"
+  exit /b %errorlevel%
+
+:: Store the files the phase installed in the build cache, after a cache_restore miss
+:cache_store
+  if not defined BUILD_CACHE_DIR exit /b 0
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-cache.ps1" -Action Store ^
+    -CacheDir "%BUILD_CACHE_DIR%" -Name %PROJECT%-%ARCH%-%BUILD_TYPE% ^
+    -InstallPrefix "%INSTALL_PREFIX%" -StateDir "%INSTALL_PREFIX%.cache" ^
+    || echo WARNING: Couldn't store %PROJECT% in the build cache
+  exit /b 0
+
 :write_pkgconfig
   set PKGCONFIG_NAME=%~1
   set PKGCONFIG_VERSION=%~2

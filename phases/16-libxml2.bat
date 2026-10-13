@@ -7,6 +7,9 @@ set GITHUB_REPO=flexibits/GNOME-libxml2
 set "TAG=flexibits-2.11"
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%" || exit \b 1
@@ -43,3 +46,6 @@ xcopy /Y /F "%SRCROOT%\%PROJECT%\include\libxml\*.h" "%INSTALL_PREFIX%\include\l
 
 :: write pkgconfig file
 call "%~dp0\..\scripts\common.bat" write_pkgconfig libxml-2.0 2.11 -DLIBXML_STATIC -lxml2 "-licuin -licuuc -licudt" || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

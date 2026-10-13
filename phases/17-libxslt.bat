@@ -11,6 +11,9 @@ for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-rel
 )
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%\win32" || exit /b 1
@@ -47,3 +50,6 @@ xcopy /Y /F /S "%SRCROOT%\%PROJECT%\libexslt\*.h" "%INSTALL_PREFIX%\include\libe
 
 :: write pkgconfig file
 call "%~dp0\..\scripts\common.bat" write_pkgconfig libxslt %TAG% "-DLIBXSLT_STATIC" "-lxslt" "-lxml2" || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

@@ -183,6 +183,9 @@ goto :eof
       rmdir /S /Q "%INSTALL_PREFIX%.failed" || exit 1
     )
   )
+
+  :: start each build with no build cache state (see scripts\build-cache.ps1)
+  if exist "%INSTALL_PREFIX%.cache" rmdir /S /Q "%INSTALL_PREFIX%.cache"
   
   for %%F in (%ROOT_DIR%\phases\??-*.*) do (
     call :set_phase_vars %%F

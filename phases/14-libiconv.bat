@@ -6,6 +6,9 @@ set GITHUB_REPO=kiyolee/libiconv-win-build
 set TAG=
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 :: determine Visual Studio version
@@ -53,3 +56,6 @@ xcopy /Y /F %BUILD_DIR%\libiconv.lib "%INSTALL_PREFIX%\lib\iconv.lib*" || exit /
 xcopy /Y /F %BUILD_DIR%\libiconv.dll "%INSTALL_PREFIX%\bin\" || exit /b 1
 xcopy /Y /F %BUILD_DIR%\libiconv.pdb "%INSTALL_PREFIX%\bin\" || exit /b 1
 xcopy /Y /F /S "%SRCROOT%\%PROJECT%\include\*" "%INSTALL_PREFIX%\include\" || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

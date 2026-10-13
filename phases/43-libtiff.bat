@@ -6,6 +6,9 @@ set REPO=https://gitlab.com/libtiff/libtiff.git
 set TAG=v4.5.0
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 set BUILD_DIR="%SRCROOT%\%PROJECT%\build-%ARCH%-%BUILD_TYPE%"
@@ -34,3 +37,6 @@ ninja install || exit /b 1
 :: rename tiffd.lib to tiff.lib to allow linking using -ltiff
 cd "%INSTALL_PREFIX%\lib"
 if exist tiffd.lib move /y tiffd.lib tiff.lib
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

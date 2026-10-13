@@ -11,6 +11,12 @@ export TAG=`../scripts/get-latest-github-release-tag.sh $GITHUB_REPO`
 # https://github.com/gnustep/libs-base/issues/278
 # export TAG=v3.4.2
 
+# skip building if the build cache (CI) already has this build; see scripts/build-cache.ps1
+phases_dir="$PWD"
+if ../scripts/common.bat cache_restore "$(cygpath -w "$PWD/$(basename "$0")")"; then
+  exit 0
+fi
+
 # load environment and prepare project
 ../scripts/common.bat prepare_project
 
@@ -65,3 +71,5 @@ install -D -t "$UNIX_INSTALL_PREFIX"/include/ include/*.h
 install -D -t "$UNIX_INSTALL_PREFIX"/bin/ .libs/libffi-*.dll
 install -D -t "$UNIX_INSTALL_PREFIX"/bin/ .libs/libffi-*.pdb
 install .libs/libffi-*.lib "$UNIX_INSTALL_PREFIX"/lib/ffi.lib
+
+"$phases_dir/../scripts/common.bat" cache_store
