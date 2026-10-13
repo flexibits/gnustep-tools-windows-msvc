@@ -28,12 +28,22 @@ exit /b %errorlevel%
     echo.
     echo ### Cloning project
     if "%SPARSE_CHECKOUT%"=="" (
-      git clone --recursive %REPO% %PROJECT% || exit /b 1
+      if not "%SHALLOW_CLONE%"=="1" (
+        git clone --recursive %REPO% %PROJECT% || exit /b 1
+      ) else if "%TAG%"=="" (
+        git clone --recursive --depth 1 %REPO% %PROJECT% || exit /b 1
+      ) else (
+        git clone --recursive --depth 1 --branch %TAG% %REPO% %PROJECT% || exit /b 1
+      )
     ) else (
       git clone -n --depth=1 --filter=tree:0 %REPO% %PROJECT% || exit /b 1
       cd %PROJECT% || exit /b 1
       git sparse-checkout set --no-cone "%SPARSE_CHECKOUT%" || exit /b 1
-      git fetch --tags || exit /b 1
+      if "%SHALLOW_CLONE%"=="1" (
+        git fetch --depth 1 origin tag %TAG% || exit /b 1
+      ) else (
+        git fetch --tags || exit /b 1
+      )
       git checkout %TAG% || exit /b 1
       cd .. || exit /b 1
     )
@@ -59,8 +69,14 @@ exit /b %errorlevel%
     :: check out tag/branch if any
     if not "%TAG%" == "" (
       echo ### Checking out "%TAG%"
-      git fetch --tags || exit /b 1
-      git checkout -q %TAG% || exit /b 1
+      if "%SHALLOW_CLONE%"=="1" (
+        REM TAG can be a tag or a branch, so check out what was fetched rather than a local ref
+        git fetch --depth 1 origin %TAG% || exit /b 1
+        git checkout -q FETCH_HEAD || exit /b 1
+      ) else (
+        git fetch --tags || exit /b 1
+        git checkout -q %TAG% || exit /b 1
+      )
     )
     
     call :update_project || exit /b 1
