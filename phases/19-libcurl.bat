@@ -15,6 +15,9 @@ for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-rel
 set TAG=curl-8_11_1
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%" || exit \b 1
@@ -28,7 +31,7 @@ mkdir "%BUILD_DIR%" || exit /b 1
 cd "%BUILD_DIR%" || exit /b 1
 
 echo.
-echo ### Running cmake
+echo ### Running cmake [%time%]
 cmake .. %CMAKE_OPTIONS% ^
   -D BUILD_SHARED_LIBS=YES ^
   -D CURL_USE_SCHANNEL=YES ^
@@ -38,11 +41,11 @@ cmake .. %CMAKE_OPTIONS% ^
   || exit /b 1
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 ninja || exit /b 1
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 ninja install || exit /b 1
 
 :: install PDB file
@@ -50,3 +53,6 @@ xcopy /Y /F lib\libcurl*.pdb "%INSTALL_PREFIX%\bin\" || exit /b 1
 
 :: rename libcurl-d_imp.lib to curl.lib to allow linking using -lcurl
 move /y "%INSTALL_PREFIX%\lib\libcurl*.lib" "%INSTALL_PREFIX%\lib\curl.lib" || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store

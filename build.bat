@@ -183,6 +183,9 @@ goto :eof
       rmdir /S /Q "%INSTALL_PREFIX%.failed" || exit 1
     )
   )
+
+  :: start each build with no build cache state (see scripts\build-cache.ps1)
+  if exist "%INSTALL_PREFIX%.cache" rmdir /S /Q "%INSTALL_PREFIX%.cache"
   
   for %%F in (%ROOT_DIR%\phases\??-*.*) do (
     call :set_phase_vars %%F
@@ -220,6 +223,7 @@ goto :eof
 :build_phase
   echo.
   echo ###### %PHASE_NAME% ######
+  echo ### Phase started %ARCH% %BUILD_TYPE% %PHASE_NAME% %time%
   
   if %PHASE_EXTENSION% == .bat (
     call %PHASE% || (echo Failed && exit 1)
@@ -228,6 +232,7 @@ goto :eof
   ) else (
     echo Error invalid phase: %PHASE_NAME% && exit 1
   )
+  echo ### Phase finished %ARCH% %BUILD_TYPE% %PHASE_NAME% %time%
   goto :eof
 
 :set_phase_vars

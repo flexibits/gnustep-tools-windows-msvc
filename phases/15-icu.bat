@@ -7,6 +7,9 @@ set "TAG=release-79.1rc"
 set "ICU_VERSION=79.1"
 set "SPARSE_CHECKOUT=icu4c"
 
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 cd "%SRCROOT%\%PROJECT%" || exit /b 1
@@ -21,7 +24,7 @@ set "UCONFIG_H=%SRCROOT%\%PROJECT%\icu4c\source\common\unicode\uconfig.h"
 :: produces host-side data tools (icupkg, genrb, makeconv, etc.) that msbuild runs on the host
 :: machine during the ARM64 target build. ICU's own msvc-arm64 CI pipeline does the same thing.
 if "%ARCH%"=="arm64" (
-  msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=x64 /p:SkipUWP=true || exit /b 1
+  msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /m /p:Configuration=%BUILD_TYPE% /p:Platform=x64 /p:SkipUWP=true || exit /b 1
 )
 
 :: perform build
@@ -32,7 +35,7 @@ if "%ARCH%"=="arm64" (
 :: despite it failing, I'm choosing to ignore it. But I'm going to leave this note here
 :: in case it bites us later on.
 ::   - brooke
-msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /p:Configuration=%BUILD_TYPE% /p:Platform=%ARCH% /p:SkipUWP=true || exit /b 1
+msbuild "%SRCROOT%\%PROJECT%\icu4c\source\allinone\allinone.sln" /m /p:Configuration=%BUILD_TYPE% /p:Platform=%ARCH% /p:SkipUWP=true || exit /b 1
 
 :: clear out previously installed artifacts
 :: (we do this explicitly instead of overwriting because depending on ICU configuration options,
@@ -82,5 +85,8 @@ if "%BUILD_TYPE%"=="Debug" (
   call "%~dp0\..\scripts\common.bat" write_pkgconfig icu-io   %ICU_VERSION% "" -licuio            "" icu-i18n || exit /b 1
   call "%~dp0\..\scripts\common.bat" write_pkgconfig icu-uc   %ICU_VERSION% "" "-licuuc -licudt"  "" ""       || exit /b 1
 )
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store
 
 exit /b 0

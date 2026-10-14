@@ -28,12 +28,22 @@ exit /b %errorlevel%
     echo.
     echo ### Cloning project
     if "%SPARSE_CHECKOUT%"=="" (
-      git clone --recursive %REPO% %PROJECT% || exit /b 1
+      if not "%SHALLOW_CLONE%"=="1" (
+        git clone --recursive %REPO% %PROJECT% || exit /b 1
+      ) else if "%TAG%"=="" (
+        git clone --recursive --depth 1 %REPO% %PROJECT% || exit /b 1
+      ) else (
+        git clone --recursive --depth 1 --branch %TAG% %REPO% %PROJECT% || exit /b 1
+      )
     ) else (
       git clone -n --depth=1 --filter=tree:0 %REPO% %PROJECT% || exit /b 1
       cd %PROJECT% || exit /b 1
       git sparse-checkout set --no-cone "%SPARSE_CHECKOUT%" || exit /b 1
-      git fetch --tags || exit /b 1
+      if "%SHALLOW_CLONE%"=="1" (
+        git fetch --depth 1 origin tag %TAG% || exit /b 1
+      ) else (
+        git fetch --tags || exit /b 1
+      )
       git checkout %TAG% || exit /b 1
       cd .. || exit /b 1
     )
@@ -59,8 +69,14 @@ exit /b %errorlevel%
     :: check out tag/branch if any
     if not "%TAG%" == "" (
       echo ### Checking out "%TAG%"
-      git fetch --tags || exit /b 1
-      git checkout -q %TAG% || exit /b 1
+      if "%SHALLOW_CLONE%"=="1" (
+        REM TAG can be a tag or a branch, so check out what was fetched rather than a local ref
+        git fetch --depth 1 origin %TAG% || exit /b 1
+        git checkout -q FETCH_HEAD || exit /b 1
+      ) else (
+        git fetch --tags || exit /b 1
+        git checkout -q %TAG% || exit /b 1
+      )
     )
     
     call :update_project || exit /b 1
@@ -120,6 +136,31 @@ exit /b %errorlevel%
 :set_git_remote
   set GIT_REMOTE=%1
   goto :eof
+
+:: Restore the phase's installed files from the build cache when BUILD_CACHE_DIR is set (CI).
+:: Exits 0 on a hit, so the phase can skip building; otherwise the phase builds and then calls
+:: cache_store. Call it once PROJECT, REPO/GITHUB_REPO and TAG are set, with the phase script's
+:: path as the argument. See build-cache.ps1 for what the cache key covers.
+:: (WindowsSDKVersion ends in a backslash, so it can't be last in a quoted argument.)
+:cache_restore
+  if not defined BUILD_CACHE_DIR exit /b 1
+  if not defined REPO set "REPO=https://github.com/%GITHUB_REPO%.git"
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-cache.ps1" -Action Restore ^
+    -CacheDir "%BUILD_CACHE_DIR%" -Name %PROJECT%-%ARCH%-%BUILD_TYPE% ^
+    -InstallPrefix "%INSTALL_PREFIX%" -StateDir "%INSTALL_PREFIX%.cache" ^
+    -Repo "%REPO%" -Ref "%TAG%" ^
+    -Inputs "%~f1;%~dp0common.bat;%~dp0sdkenv.bat;%~dp0*.py;%ROOT_DIR%\patches\%PROJECT%-*.patch;%cmake_toolchain_file%" ^
+    -Extra "%WindowsSDKVersion%;%ARCH%;%BUILD_TYPE%;%VCToolsVersion%;%VSCMD_VER%"
+  exit /b %errorlevel%
+
+:: Store the files the phase installed in the build cache, after a cache_restore miss
+:cache_store
+  if not defined BUILD_CACHE_DIR exit /b 0
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-cache.ps1" -Action Store ^
+    -CacheDir "%BUILD_CACHE_DIR%" -Name %PROJECT%-%ARCH%-%BUILD_TYPE% ^
+    -InstallPrefix "%INSTALL_PREFIX%" -StateDir "%INSTALL_PREFIX%.cache" ^
+    || echo WARNING: Couldn't store %PROJECT% in the build cache
+  exit /b 0
 
 :write_pkgconfig
   set PKGCONFIG_NAME=%~1

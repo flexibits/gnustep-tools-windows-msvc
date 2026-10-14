@@ -14,7 +14,7 @@ export TAG=
 cd "$SRCROOT/$PROJECT"
 
 echo
-echo "### Running configure"
+echo "### Running configure [$(date +%T)]"
 CONFIGURE_OPTS=
 if [ "$BUILD_TYPE" == "Debug" ]; then
   CONFIGURE_OPTS=--enable-debug-by-default
@@ -45,5 +45,5 @@ fi
   $CONFIGURE_OPTS
 
 echo
-echo "### Installing"
+echo "### Installing [$(date +%T)]"
 make install

@@ -12,6 +12,9 @@ for /f "usebackq delims=" %%i in (`call %BASH% '../scripts/get-latest-github-rel
 )
 
 :: load environment and prepare project
+:: skip building if the build cache (CI) already has this build; see scripts\build-cache.ps1
+call "%~dp0\..\scripts\common.bat" cache_restore "%~f0" && exit /b 0
+
 call "%~dp0\..\scripts\common.bat" prepare_project || exit /b 1
 
 set BUILD_DIR="%SRCROOT%\%PROJECT%\build-%ARCH%-%BUILD_TYPE%"
@@ -20,15 +23,18 @@ mkdir "%BUILD_DIR%" || exit /b 1
 cd "%BUILD_DIR%" || exit /b 1
 
 echo.
-echo ### Running cmake
+echo ### Running cmake [%time%]
 cmake .. %CMAKE_OPTIONS% ^
   -D ENABLE_STATIC=OFF -D INST_ID=vc ^
   || exit /b 1
 
 echo.
-echo ### Building
+echo ### Building [%time%]
 ninja || exit /b 1
 
 echo.
-echo ### Installing
+echo ### Installing [%time%]
 ninja install || exit /b 1
+
+if errorlevel 1 exit /b 1
+call "%~dp0\..\scripts\common.bat" cache_store
